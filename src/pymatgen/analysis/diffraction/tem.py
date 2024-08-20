@@ -30,8 +30,8 @@ __email__ = "fwan@berkeley.edu, yhljason@berkeley.edu"
 __date__ = "03/31/2020"
 
 
-module_dir = os.path.dirname(__file__)
-with open(f"{module_dir}/atomic_scattering_params.json", encoding="utf-8") as file:
+MODULE_DIR = os.path.dirname(__file__)
+with open(f"{MODULE_DIR}/atomic_scattering_params.json", encoding="utf-8") as file:
     ATOMIC_SCATTERING_PARAMS = json.load(file)
 
 
@@ -484,7 +484,7 @@ class TEMCalculator(AbstractDiffractionPatternCalculator):
             points.remove((0, 0, 0))
         points.remove(first_point)
         points.remove(second_point)
-        positions[(0, 0, 0)] = np.array([0, 0])
+        positions[0, 0, 0] = np.array([0, 0])
         r1 = self.wavelength_rel() * self.camera_length / first_d
         positions[first_point] = np.array([r1, 0])
         r2 = self.wavelength_rel() * self.camera_length / second_d
