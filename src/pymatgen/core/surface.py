@@ -557,7 +557,7 @@ class Slab(Structure):
                         frac_coords.append(struct_matcher.frac_coords + [0, 0, shift])  # noqa: RUF005
 
                 # sort by species to put all similar species together.
-                sp_fcoord = sorted(zip(species, frac_coords), key=lambda x: x[0])
+                sp_fcoord = sorted(zip(species, frac_coords, strict=True), key=lambda x: x[0])
                 species = [x[0] for x in sp_fcoord]
                 frac_coords = [x[1] for x in sp_fcoord]
                 slab = type(self)(
@@ -949,9 +949,9 @@ class SlabGenerator:
                 or "bulk_equivalent" not in initial_structure.site_properties
             ):
                 spg_analyzer = SpacegroupAnalyzer(initial_structure)
-                initial_structure.add_site_property("bulk_wyckoff", spg_analyzer.get_symmetry_dataset()["wyckoffs"])
+                initial_structure.add_site_property("bulk_wyckoff", spg_analyzer.get_symmetry_dataset().wyckoffs)
                 initial_structure.add_site_property(
-                    "bulk_equivalent", spg_analyzer.get_symmetry_dataset()["equivalent_atoms"].tolist()
+                    "bulk_equivalent", spg_analyzer.get_symmetry_dataset().equivalent_atoms.tolist()
                 )
 
         def calculate_surface_normal() -> np.ndarray:
@@ -971,7 +971,7 @@ class SlabGenerator:
             """
             slab_scale_factor = []
             non_orth_ind = []
-            eye = np.eye(3, dtype=int)
+            eye = np.eye(3, dtype=np.int64)
             for idx, miller_idx in enumerate(miller_index):
                 if miller_idx == 0:
                     # If lattice vector is perpendicular to surface normal, i.e.,
@@ -1691,7 +1691,7 @@ def get_d(slab: Slab) -> float:
     sorted_sites = sorted(slab, key=lambda site: site.frac_coords[2])
 
     distance = None
-    for site, next_site in zip(sorted_sites, sorted_sites[1:]):
+    for site, next_site in itertools.pairwise(sorted_sites):
         if not isclose(site.frac_coords[2], next_site.frac_coords[2], abs_tol=1e-6):
             distance = next_site.frac_coords[2] - site.frac_coords[2]
             break
@@ -2114,7 +2114,7 @@ def hkl_transformation(
     transf_hkl = np.array([idx // divisor for idx in transf_hkl])
 
     # Get positive Miller index
-    if len([i for i in transf_hkl if i < 0]) > 1:
+    if sum(idx < 0 for idx in transf_hkl) > 1:
         transf_hkl *= -1
 
     return tuple(transf_hkl)

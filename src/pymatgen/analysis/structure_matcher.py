@@ -559,7 +559,7 @@ class StructureMatcher(MSONable):
         if s1_supercell:
             # remove the symmetrically equivalent s1 indices
             inds = inds[::fu]
-        return np.array(mask, dtype=int), inds, idx
+        return np.array(mask, dtype=np.int64), inds, idx
 
     def fit(
         self, struct1: Structure, struct2: Structure, symmetric: bool = False, skip_structure_reduction: bool = False
@@ -913,7 +913,7 @@ class StructureMatcher(MSONable):
         s2_comp = struct2.composition
         matches = []
         for perm in itertools.permutations(sp2):
-            sp_mapping = dict(zip(sp1, perm))
+            sp_mapping = dict(zip(sp1, perm, strict=True))
 
             # do quick check that compositions are compatible
             mapped_comp = Composition({sp_mapping[k]: v for k, v in s1_comp.items()})
