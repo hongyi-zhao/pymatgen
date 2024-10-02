@@ -142,8 +142,8 @@ def make_supergraph(graph, multiplicity, periodicity_vectors):
     if isinstance(multiplicity, int) or len(multiplicity) == 1:
         mult = multiplicity if isinstance(multiplicity, int) else multiplicity[0]
         nodes = graph.nodes(data=True)
-        inodes = [isite for isite, data in nodes]
-        indices_nodes = {isite: inodes.index(isite) for isite in inodes}
+        node_indices = [idx for idx, data in nodes]
+        indices_nodes = {idx: node_indices.index(idx) for idx in node_indices}
         edges = graph.edges(data=True, keys=True)
         connecting_edges = []
         other_edges = []
@@ -211,9 +211,6 @@ class ConnectedComponent(MSONable):
             environments_data: Data of environment nodes.
             links_data: Data of links between environment nodes.
             graph: Graph of the connected component.
-
-        Returns:
-            ConnectedComponent: Instance of this class
         """
         self._periodicity_vectors: list[list] | None = None
         self._primitive_reduced_connected_subgraph = None

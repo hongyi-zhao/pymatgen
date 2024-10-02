@@ -47,8 +47,7 @@ def estimate_band_connection(prev_eigvecs, eigvecs, prev_band_order) -> list[int
     metric = np.abs(np.dot(prev_eigvecs.conjugate().T, eigvecs))
     connection_order = []
     for overlaps in metric:
-        max_val = 0
-        max_idx = 0
+        max_val = max_idx = 0
         for idx in reversed(range(len(metric))):
             val = overlaps[idx]
             if idx in connection_order:
@@ -183,7 +182,7 @@ class PhononBandStructure(MSONable):
         Args:
             tol: Tolerance for determining if a frequency is imaginary. Defaults to 0.01.
         """
-        return self.min_freq()[1] + tol < 0
+        return bool(self.min_freq()[1] + tol < 0)
 
     def has_imaginary_gamma_freq(self, tol: float = 0.01) -> bool:
         """Check if there are imaginary modes at the gamma point and all close points.
@@ -556,8 +555,7 @@ class PhononBandStructureSymmLine(PhononBandStructure):
                 hsq_dict[nq] = q_pt.label
 
         # get distances
-        dist = 0
-        nq_start = 0
+        dist = nq_start = 0
         distances = [dist]
         line_breaks = []
         for nq in range(1, len(qpoints)):

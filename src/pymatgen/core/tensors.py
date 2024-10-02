@@ -331,7 +331,7 @@ class Tensor(np.ndarray, MSONable):
             structure (Structure): structure to be fit to
             tol (float): tolerance for symmetry testing
         """
-        return (self - self.fit_to_structure(structure) < tol).all()
+        return bool((self - self.fit_to_structure(structure) < tol).all())
 
     @property
     def voigt(self) -> NDArray:
@@ -391,7 +391,7 @@ class Tensor(np.ndarray, MSONable):
         t = cls(np.zeros([3] * rank))
         if voigt_input.shape != t._vscale.shape:
             raise ValueError("Invalid shape for Voigt matrix")
-        voigt_input = voigt_input / t._vscale
+        voigt_input = voigt_input / t._vscale  # (ruff-preview) noqa: PLR6104
         this_voigt_map = t.get_voigt_dict(rank)
         for ind, v in this_voigt_map.items():
             t[ind] = voigt_input[v]
@@ -968,7 +968,7 @@ class SquareTensor(Tensor):
         det = np.abs(np.linalg.det(self))
         if include_improper:
             det = np.abs(det)
-        return (np.abs(self.inv - self.trans) < tol).all() and (np.abs(det - 1.0) < tol)
+        return bool((np.abs(self.inv - self.trans) < tol).all() and (np.abs(det - 1.0) < tol))
 
     def refine_rotation(self) -> Self:
         """Helper method for refining rotation matrix by ensuring

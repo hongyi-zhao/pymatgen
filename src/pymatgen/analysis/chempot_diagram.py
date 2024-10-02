@@ -252,7 +252,7 @@ class ChemicalPotentialDiagram(MSONable):
         inds.extend([self._min_entries.index(el) for el in self.el_refs.values()])
 
         hyperplanes = data[inds]
-        hyperplanes[:, -1] = hyperplanes[:, -1] * -1
+        hyperplanes[:, -1] *= -1
         hyperplane_entries = [self._min_entries[idx] for idx in inds]
 
         return hyperplanes, hyperplane_entries
@@ -670,11 +670,9 @@ def get_centroid_2d(vertices: np.ndarray) -> np.ndarray:
             circumferentially
 
     Returns:
-        np.array: Giving 2-d centroid coordinates.
+        np.ndarray: Giving 2-d centroid coordinates.
     """
-    cx = 0
-    cy = 0
-    a = 0
+    cx = cy = a = 0
 
     for idx in range(len(vertices) - 1):
         xi = vertices[idx, 0]

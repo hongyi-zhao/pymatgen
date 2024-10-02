@@ -51,8 +51,8 @@ if TYPE_CHECKING:
 try:
     from BoltzTraP2 import bandlib as BL
     from BoltzTraP2 import fite, sphere, units
-except ImportError:
-    raise BoltztrapError("BoltzTraP2 has to be installed and working")
+except ImportError as exc:
+    raise BoltztrapError("BoltzTraP2 has to be installed and working") from exc
 
 
 __author__ = "Francesco Ricci"
@@ -572,10 +572,14 @@ class BztInterpolator:
     def get_partial_doses(self, tdos, eband_ud, spins, enr, npts_mu, T, progress):
         """Return a CompleteDos object interpolating the projections.
 
-        tdos: total dos previously calculated
-        npts_mu: number of energy points of the Dos
-        T: parameter used to smooth the Dos
-        progress: Default False, If True a progress bar is shown.
+        Args:
+            tdos: total dos previously calculated
+            eband_ud: list of bands for each spin
+            spins: list of spins
+            enr: energy range
+            npts_mu: number of energy points of the Dos
+            T: parameter used to smooth the Dos
+            progress: Default False, If True a progress bar is shown.
         """
         if not self.data.proj:
             raise BoltztrapError("No projections loaded.")
@@ -944,7 +948,7 @@ class BztPlotter:
 
     Example:
         bztPlotter = BztPlotter(bztTransp,bztInterp)
-        fig = self.bztPlotter.plot_props('S', 'mu', 'temp', temps=[300, 500])
+        fig = self.bztPlotter.plot_props("S", "mu", "temp", temps=[300, 500])
         fig.show()
     """
 
